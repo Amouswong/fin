@@ -1,1036 +1,658 @@
 <!DOCTYPE html>
-<html lang="zh-TW">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Pokémon オリパ 期望值計算器</title>
-<script src="https://cdn.tailwindcss.com"></script>
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<html lang="zh-Hant"><head>
+<meta charset="UTF-8"><style id="qw-theme">:root {
+  --color-bg: #faf9fc !important;
+  --color-text: #131920 !important;
+  --react-pdf-text-layer: 1 !important;
+  --highlight-bg-color: #b400aa !important;
+  --highlight-selected-bg-color: #006400 !important;
+  --react-pdf-annotation-layer: 1 !important;
+  --annotation-unfocused-field-background: url("data:image/svg+xml;charset=UTF-8,<svg width='1px' height='1px' xmlns='http://www.w3.org/2000/svg'><rect width='100%' height='100%' style='fill:rgba(0, 54, 255, 0.13);'/></svg>") !important;
+  --input-focus-border-color: Highlight !important;
+  --input-focus-outline: 1px solid Canvas !important;
+  --input-unfocused-border-color: transparent !important;
+  --input-disabled-border-color: transparent !important;
+  --input-hover-border-color: black !important;
+  --link-outline: none !important;
+  --qs-data-categorical-01: #4338ca !important;
+  --qs-data-categorical-06: #0c4a6e !important;
+  --qs-data-categorical-10: #831843 !important;
+  --flow-size-overview-canvas-min-height: 480px !important;
+  --chat-column-max: 720px !important;
+  --color-navbar-bg: #f9f9fb !important;
+  --color-navbar-fg: #131920 !important;
+  --color-navbar-divider: #0000001f !important;
+  --color-leftnav-bg: #f9f9fb !important;
+  --color-bg-chat-view: #f9f9fb !important;
+  --color-bg-secondary: #fff !important;
+  --color-bg-tertiary: #f9fafb !important;
+  --color-bg-hover: #f3f4f6 !important;
+  --color-surface: #f9fafb !important;
+  --color-surface-hover: #f3f4f6 !important;
+  --color-surface-active: #e5e7eb !important;
+  --color-border: #0000001f !important;
+  --color-border-light: #0000000f !important;
+  --color-border-strong: #d1d5db !important;
+  --background-toggle-off-default: #fff0 !important;
+  --color-primary: #4200db !important;
+  --color-primary-dark: #35009e !important;
+  --color-primary-light: #8575ff !important;
+  --color-primary-bg: #e8e6ff !important;
+  --color-primary-hover-border: #35009e !important;
+  --color-nav-icon-active: #4200db !important;
+  --color-nav-hover-border: #4200db !important;
+  --color-primary-alpha-3: color-mix(in srgb, #4200db 3%, transparent) !important;
+  --color-primary-alpha-5: color-mix(in srgb, #4200db 5%, transparent) !important;
+  --color-primary-alpha-8: color-mix(in srgb, #4200db 8%, transparent) !important;
+  --color-primary-alpha-12: color-mix(in srgb, #4200db 12%, transparent) !important;
+  --color-primary-alpha-15: color-mix(in srgb, #4200db 15%, transparent) !important;
+  --color-primary-alpha-20: color-mix(in srgb, #4200db 20%, transparent) !important;
+  --color-primary-alpha-25: color-mix(in srgb, #4200db 25%, transparent) !important;
+  --color-primary-alpha-30: color-mix(in srgb, #4200db 30%, transparent) !important;
+  --color-primary-alpha-40: color-mix(in srgb, #4200db 40%, transparent) !important;
+  --color-primary-alpha-50: color-mix(in srgb, #4200db 50%, transparent) !important;
+  --color-primary-alpha-60: color-mix(in srgb, #4200db 60%, transparent) !important;
+  --color-primary-subtle: color-mix(in srgb, #4200db 12%, transparent) !important;
+  --color-primary-border: color-mix(in srgb, #4200db 30%, transparent) !important;
+  --color-focus-ring: #4200db !important;
+  --color-sidebar-hover: color-mix(in srgb, #4200db 12%, transparent) !important;
+  --color-sidebar-hover-solid: color-mix(in srgb, #4200db 12%, #faf9fc) !important;
+  --block-hover-outline: 1px dashed color-mix(in srgb, #4200db 50%, transparent) !important;
+  --block-selected-outline: 1px solid #8575ff !important;
+  --block-selection-outline-offset: 2px !important;
+  --block-selected-halo: 0 0 8px color-mix(in srgb, #4200db 40%, transparent) !important;
+  --color-accent: #4200db !important;
+  --color-accent-foreground: #4200db !important;
+  --color-accent-dark: #35009e !important;
+  --color-accent-light: #e8e6ff !important;
+  --color-accent-inverse: #fff !important;
+  --color-link: #4200db !important;
+  --color-brand-ai-gradient-start: #6842ff !important;
+  --color-brand-ai-gradient-mid: #d600ba !important;
+  --color-brand-ai-gradient-end: #ff4b14 !important;
+  --color-brand-kiro: #9147ff !important;
+  --color-primary-gradient-end: #e8e6ff !important;
+  --color-primary-bg-solid: #e8e6ff !important;
+  --color-user-bubble: #f3f3f7 !important;
+  --color-user-bubble-text: #131920 !important;
+  --color-text-secondary: #5e5e5e !important;
+  --color-text-tertiary: #656871 !important;
+  --color-text-muted: #656871 !important;
+  --color-text-on-primary: #fff !important;
+  --color-success: #00802f !important;
+  --color-success-dark: #00471e !important;
+  --color-success-light: #d9ffd6 !important;
+  --color-success-hover: #005c26 !important;
+  --color-success-bg: #e6f5eb !important;
+  --color-success-border: #b3d9bf !important;
+  --color-success-foreground: #00802f !important;
+  --color-success-dark-foreground: #00471e !important;
+  --color-success-text: #00471e !important;
+  --color-error: #db0000 !important;
+  --color-error-dark: #700000 !important;
+  --color-error-light: #ffe0e0 !important;
+  --color-error-hover: #ffe0e0 !important;
+  --color-error-bg: #fceaea !important;
+  --color-error-border: #f2cccc !important;
+  --color-error-active-border: #db0000 !important;
+  --color-error-foreground: #db0000 !important;
+  --color-error-dark-foreground: #700000 !important;
+  --color-error-inverse: #fff !important;
+  --color-error-text: #700000 !important;
+  --color-warning: #f2b100 !important;
+  --color-warning-dark: #573a00 !important;
+  --color-warning-light: #fffbbd !important;
+  --color-warning-hover: #db9200 !important;
+  --color-warning-bg: #fef7e6 !important;
+  --color-warning-border: #f9dfa3 !important;
+  --color-warning-foreground: #f2b100 !important;
+  --color-warning-dark-foreground: #573a00 !important;
+  --color-warning-inverse: #573a00 !important;
+  --color-surface-warning: #fffbbd !important;
+  --color-text-warning: #573a00 !important;
+  --color-info: #006ce0 !important;
+  --color-info-dark: #002a66 !important;
+  --color-info-light: #d1f1ff !important;
+  --color-info-hover: #003b8f !important;
+  --color-info-bg: #ebf3fc !important;
+  --color-info-border: #b3d1f0 !important;
+  --color-info-foreground: #006ce0 !important;
+  --color-info-dark-foreground: #002a66 !important;
+  --color-info-inverse: #fff !important;
+  --color-overlay: #00000080 !important;
+  --color-shadow: #00000014 !important;
+  --color-hover: #0000000d !important;
+  --color-tooltip-bg: #000000d9 !important;
+  --color-tooltip-text: #fff !important;
+  --color-voice-purple: #8575ff !important;
+  --color-voice-purple-dark: #4200db !important;
+  --color-voice-purple-light: #8575ff !important;
+  --color-voice-red: #db0000 !important;
+  --color-voice-red-dark: #700000 !important;
+  --color-voice-amber: #f2b100 !important;
+  --color-voice-purple-glow: #4200db66 !important;
+  --color-voice-red-glow: #db000066 !important;
+  --font-sans: "Amazon Ember", "Helvetica Neue", "Segoe UI", Roboto, Helvetica, Arial, sans-serif !important;
+  --font-mono: "SF Mono", "Monaco", "Menlo", "Consolas", monospace !important;
+  --text-2xs: .5625rem !important;
+  --text-xs: .625rem !important;
+  --text-sm: .6875rem !important;
+  --text-base: .75rem !important;
+  --text-md: .8125rem !important;
+  --text-lg: .875rem !important;
+  --text-xl: 1rem !important;
+  --text-2xl: 1.125rem !important;
+  --text-3xl: 1.25rem !important;
+  --text-4xl: 1.5rem !important;
+  --text-5xl: 2rem !important;
+  --spacing-1: calc(.25rem * 1) !important;
+  --spacing-1-5: calc(.25rem * 1.5) !important;
+  --spacing-2: calc(.25rem * 2) !important;
+  --spacing-3: calc(.25rem * 3) !important;
+  --spacing-4: calc(.25rem * 4) !important;
+  --spacing-5: calc(.25rem * 5) !important;
+  --spacing-6: calc(.25rem * 6) !important;
+  --spacing-7: calc(.25rem * 7) !important;
+  --spacing-8: calc(.25rem * 8) !important;
+  --spacing-9: calc(.25rem * 9) !important;
+  --spacing-10: calc(.25rem * 10) !important;
+  --border-radius-rounded-lg: 8px !important;
+  --radius-sm: 6px !important;
+  --radius-md: 10px !important;
+  --radius-card: 12px !important;
+  --radius-lg: 16px !important;
+  --radius-pill: 8px !important;
+  --shadow-sm: 0 1px 2px #0000000d !important;
+  --shadow-md: 0 4px 12px #00000014 !important;
+  --shadow-lg: 0 4px 16px 4px #00000029, 0 2px 6px 1px #00000029 !important;
+  --color-success-bg-solid: #d9ffd6 !important;
+  --color-error-bg-solid: #ffe0e0 !important;
+  --color-error-border-solid: #ffe0e0 !important;
+  --color-warning-bg-solid: #fffbbd !important;
+  --color-warning-text: #573a00 !important;
+  --color-info-bg-solid: #d1f1ff !important;
+  --color-info-bg-solid-alt: #d1f1ff !important;
+  --color-info-text: #002a66 !important;
+  --color-info-text-alt: #002a66 !important;
+  --color-emerald: #10b981 !important;
+  --color-teal: #4ecdc4 !important;
+  --color-code-bg: #f3f3f7 !important;
+  --color-code-header-bg: #f1f3f5 !important;
+  --color-code-text: #24292e !important;
+  --color-code-border: #e1e4e8 !important;
+  --color-code-muted: #6a737d !important;
+  --color-inline-code-bg: #f3f3f7 !important;
+  --color-inline-code-text: #24292e !important;
+  --color-inline-code-border: #e1e4e8 !important;
+  --color-scrollbar-thumb: #d1d5db !important;
+  --color-scrollbar-track: transparent !important;
+  --qs-data-cat-01: #4338ca !important;
+  --qs-data-cat-02: #d97706 !important;
+  --qs-data-cat-03: #0891b2 !important;
+  --qs-data-cat-04: #8b5cf6 !important;
+  --qs-data-cat-05: #15803d !important;
+  --qs-data-cat-06: #0c4a6e !important;
+  --qs-data-cat-07: #d946ef !important;
+  --qs-data-cat-08: #65a30d !important;
+  --qs-data-cat-09: #1d4ed8 !important;
+  --qs-data-cat-10: #831843 !important;
+  --qs-data-cat-11: #c2410c !important;
+  --qs-data-cat-12: #115e59 !important;
+  --qs-data-cat-other: #737373 !important;
+  --qs-content: #fff !important;
+  --qs-main: #fff !important;
+  --qs-primary-foreground: #131920 !important;
+  --qs-secondary-foreground: #656871 !important;
+  --qs-tertiary-foreground: #656871 !important;
+  --qs-placeholder-foreground: #656871 !important;
+  --qs-divider: #dedee3 !important;
+  --qs-default-border: #8c8c94 !important;
+  --qs-neutral-soft: #b4b4bb !important;
+  --qs-neutral-gray-50: #f9fafb !important;
+  --qs-tertiary-background: #f9fafb !important;
+  --qs-action-hover: #f3f3f7 !important;
+  --qs-primary-default: #4200db !important;
+  --qs-primary-dark: #35009e !important;
+  --qs-primary-medium: #8575ff !important;
+  --qs-primary-light: #e8e6ff !important;
+  --qs-primary-inverse: #fff !important;
+  --qs-success-default: #00802f !important;
+  --qs-success-dark: #00471e !important;
+  --qs-success-light: #d9ffd6 !important;
+  --qs-error-default: #db0000 !important;
+  --qs-error-dark: #700000 !important;
+  --qs-warning-default: #f2b100 !important;
+  --qs-warning-dark: #573a00 !important;
+  --qs-warning-light: #fffbbd !important;
+  --qs-info-default: #006ce0 !important;
+  --qs-info-dark: #002a66 !important;
+  --qs-font-sans: "Amazon Ember", "Helvetica Neue", "Segoe UI", Helvetica, Arial, sans-serif !important;
+  --safe-top: 0px !important;
+  --safe-bottom: 0px !important;
+  --safe-left: 0px !important;
+  --safe-right: 0px !important;
+  --qs-action-active: #e8e6ff !important;
+  --qs-action-disabled: #f3f3f7 !important;
+  --qs-active-border: #4200db !important;
+  --qs-application-navbar: #4200db !important;
+  --qs-application-navbar-dark: #35009e !important;
+  --qs-application-navbar-foreground: #fff !important;
+  --qs-application-navbar-light: #e8e6ff !important;
+  --qs-automation-dark: #660052 !important;
+  --qs-automation-default: #d600ba !important;
+  --qs-automation-light: #ffe0fb !important;
+  --qs-automation-medium: #b3008f !important;
+  --qs-automation-soft: #ff94f1 !important;
+  --qs-avatar-blue-bg: #d1f1ff !important;
+  --qs-avatar-blue-fg: #002a66 !important;
+  --qs-avatar-fuchsia-bg: #fce6ff !important;
+  --qs-avatar-fuchsia-fg: #590066 !important;
+  --qs-avatar-green-bg: #d9ffd6 !important;
+  --qs-avatar-green-fg: #00471e !important;
+  --qs-avatar-neutral-bg: #dedee3 !important;
+  --qs-avatar-neutral-fg: #131920 !important;
+  --qs-avatar-orange-bg: #ffe0d6 !important;
+  --qs-avatar-orange-fg: #661800 !important;
+  --qs-avatar-pink-bg: #ffe0fb !important;
+  --qs-avatar-pink-fg: #660052 !important;
+  --qs-avatar-primary-bg: #e8e6ff !important;
+  --qs-avatar-primary-fg: #35009e !important;
+  --qs-avatar-red-bg: #ffe0e0 !important;
+  --qs-avatar-red-fg: #700000 !important;
+  --qs-avatar-violet-bg: #f2e5ff !important;
+  --qs-avatar-violet-fg: #45008a !important;
+  --qs-avatar-yellow-bg: #fffbbd !important;
+  --qs-avatar-yellow-fg: #573a00 !important;
+  --qs-brand: #fff !important;
+  --qs-brand-foreground: #131920 !important;
+  --qs-brand-navbar: #131920 !important;
+  --qs-brand-navbar-dark: #000 !important;
+  --qs-brand-navbar-foreground: #fff !important;
+  --qs-brand-navbar-light: #dedee3 !important;
+  --qs-coachmark: #006ce0 !important;
+  --qs-connection-dark: #661800 !important;
+  --qs-connection-default: #db3300 !important;
+  --qs-connection-light: #ffe0d6 !important;
+  --qs-connection-soft: #ff997a !important;
+  --qs-content-inverse: #333843 !important;
+  --qs-content-inverse-active: #131920 !important;
+  --qs-contrast-foreground: #131920 !important;
+  --qs-data-categorical-02: #d97706 !important;
+  --qs-data-categorical-03: #0891b2 !important;
+  --qs-data-categorical-04: #8b5cf6 !important;
+  --qs-data-categorical-05: #15803d !important;
+  --qs-data-categorical-07: #d946ef !important;
+  --qs-data-categorical-08: #65a30d !important;
+  --qs-data-categorical-09: #1d4ed8 !important;
+  --qs-data-categorical-11: #c2410c !important;
+  --qs-data-categorical-12: #115e59 !important;
+  --qs-data-categorical-other: #737373 !important;
+  --qs-data-divergent-negative: #ea580c !important;
+  --qs-data-divergent-positive: #4f46e5 !important;
+  --qs-data-divergent-red-green-negative: #dc2626 !important;
+  --qs-data-divergent-red-green-positive: #16a34a !important;
+  --qs-data-missing: #d4d4d4 !important;
+  --qs-data-sentiment-neutral: #737373 !important;
+  --qs-data-sentiment-warning: #9e6900 !important;
+  --qs-data-sequential-duochromatic-high: #1e1b4b !important;
+  --qs-data-sequential-duochromatic-low: #8b5cf6 !important;
+  --qs-data-sequential-monochromatic-high: #4f46e5 !important;
+  --qs-default-badge: #b4b4bb !important;
+  --qs-default-badge-dot: #656871 !important;
+  --qs-dimension: #4200db !important;
+  --qs-dimension-experimental: #4200db !important;
+  --qs-dimension-experimental-foreground: #4200db !important;
+  --qs-dimension-foreground: #fff !important;
+  --qs-disabled: #8c8c94 !important;
+  --qs-disabled-border: #dedee3 !important;
+  --qs-disabled-foreground: #b4b4bb !important;
+  --qs-divider-light: #f3f3f7 !important;
+  --qs-error-active-border: #db0000 !important;
+  --qs-error-border: #ffe0e0 !important;
+  --qs-error-foreground: #db0000 !important;
+  --qs-error-inverse: #fff !important;
+  --qs-error-light: #ffe0e0 !important;
+  --qs-error-medium: #900 !important;
+  --qs-error-soft: #ff9e9e !important;
+  --qs-focus-offset: 1px !important;
+  --qs-font-base-letter-spacing: .15px !important;
+  --qs-font-family: "Amazon Ember", "Helvetica Neue", "Segoe UI", Helvetica, Arial, sans-serif !important;
+  --qs-grid-gap: 16px !important;
+  --qs-grid-gap-xl: 24px !important;
+  --qs-hero-banner-button-hover: color-mix(in srgb, #fff, transparent 60%) !important;
+  --qs-hover-border: #333843 !important;
+  --qs-info-inverse: #fff !important;
+  --qs-info-light: #d1f1ff !important;
+  --qs-info-medium: #003b8f !important;
+  --qs-info-soft: #75cfff !important;
+  --qs-insight-dark: #590066 !important;
+  --qs-insight-default: #a000b8 !important;
+  --qs-insight-light: #fce6ff !important;
+  --qs-insight-soft: #f299ff !important;
+  --qs-main-foreground: #131920 !important;
+  --qs-main-secondary-foreground: #656871 !important;
+  --qs-measure: #00802f !important;
+  --qs-measure-experimental: #f2b100 !important;
+  --qs-measure-experimental-foreground: #f2b100 !important;
+  --qs-measure-foreground: #fff !important;
+  --qs-neutral-black: #000 !important;
+  --qs-neutral-dark: #333843 !important;
+  --qs-neutral-deep: #656871 !important;
+  --qs-neutral-default: #dedee3 !important;
+  --qs-neutral-light: #f3f3f7 !important;
+  --qs-neutral-lightest: #f9f9fb !important;
+  --qs-neutral-medium: #8c8c94 !important;
+  --qs-neutral-strong: #131920 !important;
+  --qs-neutral-white: #fff !important;
+  --qs-overlay: color-mix(in srgb, #131920, transparent 50%) !important;
+  --qs-primary-inverse-foreground: #fff !important;
+  --qs-primary-soft: #b2a8ff !important;
+  --qs-secondary: #dedee3 !important;
+  --qs-secondary-dark: #b4b4bb !important;
+  --qs-secondary-light: #f3f3f7 !important;
+  --qs-shadow: #00000029 !important;
+  --qs-shadow-lg: 0 4px 16px 4px #00000029, 0 2px 6px 1px #00000029 !important;
+  --qs-shadow-md: 0 0 2px 0 #00000029, 0 2px 8px 1px #00000029 !important;
+  --qs-shadow-pin-left: inset -4px 0 4px -4px #00000029 !important;
+  --qs-shadow-pin-right: inset 4px 0 4px -4px #00000029 !important;
+  --qs-shadow-sm: 0 0 2px 0 #00000029, 0 0 4px 0 #00000029 !important;
+  --qs-shadow-xl: 0 4px 8px 2px #00000029, 0 6px 20px 4px #00000029 !important;
+  --qs-spice: #ff9800 !important;
+  --qs-success-inverse: #fff !important;
+  --qs-success-medium: #005c26 !important;
+  --qs-success-soft: #aeffa8 !important;
+  --qs-tag-default: #dedee3 !important;
+  --qs-tag-soft-border: #b4b4bb !important;
+  --qs-toggle-tile-lg: calc(.25rem * 15) !important;
+  --qs-toggle-tile-md: calc(.25rem * 12) !important;
+  --qs-toggle-tile-sm: calc(.25rem * 8) !important;
+  --qs-transparent: transparent !important;
+  --qs-visualization-dark: #45008a !important;
+  --qs-visualization-default: #7300e5 !important;
+  --qs-visualization-light: #f2e5ff !important;
+  --qs-visualization-soft: #d4a8ff !important;
+  --qs-warning-experimental: #f2b100 !important;
+  --qs-warning-experimental-light: #fffbbd !important;
+  --qs-warning-experimental-light-foreground: #fffbbd !important;
+  --qs-warning-inverse: #573a00 !important;
+  --qs-warning-medium: #db9200 !important;
+  --qs-warning-soft: #ffed4d !important;
+  --qs-width-modal-lg: 1136px !important;
+  --qs-width-modal-md: 600px !important;
+  --qs-width-modal-sm: 384px !important;
+  --qs-duration-reorder: .125s !important;
+  --qs-ease-reorder: ease-in-out !important;
+  --z-subtask-modal: 10000 !important;
+  --z-above-subtask-modal: 10001 !important;
+}</style>
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="我的財務">
+<meta name="theme-color" content="#0f172a">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon.png">
+<title>我的財務</title>
 <style>
-  :root {
-    --pokemon-red: #CC0000;
-    --pokemon-blue: #003A70;
-    --pokemon-yellow: #FFCB05;
-    --pokemon-dark: #1a1a2e;
-    --pokemon-card: #16213e;
-    --pokemon-border: #0f3460;
-  }
-  * { box-sizing: border-box; }
-  body {
-    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
-    min-height: 100vh;
-    font-family: 'Segoe UI', system-ui, sans-serif;
-  }
-  .card {
-    background: rgba(22, 33, 62, 0.9);
-    border: 1px solid rgba(255, 203, 5, 0.3);
-    backdrop-filter: blur(10px);
-  }
-  .prize-row {
-    background: rgba(15, 52, 96, 0.5);
-    border: 1px solid rgba(255, 203, 5, 0.15);
-    transition: all 0.2s;
-  }
-  .prize-row:hover { border-color: rgba(255, 203, 5, 0.4); }
-  .pokemon-input {
-    background: rgba(10, 20, 40, 0.8);
-    border: 1px solid rgba(255, 203, 5, 0.3);
-    color: #fff;
-    transition: all 0.2s;
-    -webkit-appearance: none;
-  }
-  .pokemon-input:focus {
-    outline: none;
-    border-color: #FFCB05;
-    box-shadow: 0 0 0 2px rgba(255, 203, 5, 0.2);
-  }
-  .pokemon-input::placeholder { color: rgba(255,255,255,0.3); }
-  .btn-primary {
-    background: linear-gradient(135deg, #FFCB05, #FFB800);
-    color: #1a1a2e;
-    font-weight: 700;
-    transition: all 0.2s;
-    cursor: pointer;
-  }
-  .btn-primary:hover {
-    transform: translateY(-1px);
-    box-shadow: 0 4px 15px rgba(255, 203, 5, 0.4);
-  }
-  .btn-danger {
-    background: rgba(204, 0, 0, 0.3);
-    border: 1px solid rgba(204, 0, 0, 0.5);
-    color: #ff6b6b;
-    transition: all 0.2s;
-    cursor: pointer;
-  }
-  .btn-danger:hover { background: rgba(204, 0, 0, 0.6); }
-  .btn-secondary {
-    background: rgba(0, 58, 112, 0.6);
-    border: 1px solid rgba(255, 203, 5, 0.3);
-    color: #FFCB05;
-    transition: all 0.2s;
-    cursor: pointer;
-  }
-  .btn-secondary:hover {
-    background: rgba(0, 58, 112, 0.9);
-    border-color: #FFCB05;
-  }
-  .stat-card {
-    background: rgba(10, 20, 50, 0.8);
-    border-radius: 12px;
-    padding: 12px;
-    text-align: center;
-    border: 1px solid rgba(255, 203, 5, 0.2);
-    transition: all 0.3s;
-  }
-  .stat-card:hover {
-    border-color: rgba(255, 203, 5, 0.5);
-    transform: translateY(-2px);
-  }
-  .stat-value { font-size: 1.6rem; font-weight: 800; }
-  .stat-label { font-size: 0.7rem; color: rgba(255,255,255,0.6); margin-top: 4px; }
-  .profit { color: #4ade80; }
-  .loss { color: #f87171; }
-  .break { color: #fbbf24; }
-  .ev-positive { color: #4ade80; }
-  .ev-negative { color: #f87171; }
-  .section-title {
-    font-size: 1rem;
-    font-weight: 700;
-    color: #FFCB05;
-    letter-spacing: 0.05em;
-    border-bottom: 1px solid rgba(255, 203, 5, 0.3);
-    padding-bottom: 8px;
-    margin-bottom: 14px;
-  }
-  .warning-text { color: #fbbf24; font-size: 0.8rem; }
-  .error-text { color: #f87171; font-size: 0.8rem; }
-  .sim-result-row {
-    background: rgba(15, 52, 96, 0.4);
-    border-left: 3px solid;
-    padding: 6px 10px;
-    margin: 3px 0;
-    border-radius: 0 8px 8px 0;
-    font-size: 0.8rem;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 4px;
-    align-items: center;
-  }
-  .remainder-row {
-    background: rgba(255, 203, 5, 0.05);
-    border: 1px dashed rgba(255, 203, 5, 0.3);
-  }
-  #pieChart { max-height: 220px; }
-  .animate-pulse-once { animation: pulseOnce 0.5s ease-out; }
-  @keyframes pulseOnce {
-    0% { transform: scale(1); }
-    50% { transform: scale(1.05); }
-    100% { transform: scale(1); }
-  }
-  .scrollable { max-height: 360px; overflow-y: auto; }
-  .scrollable::-webkit-scrollbar { width: 5px; }
-  .scrollable::-webkit-scrollbar-track { background: rgba(0,0,0,0.2); }
-  .scrollable::-webkit-scrollbar-thumb { background: rgba(255,203,5,0.4); border-radius: 3px; }
-
-  /* Prize row mobile layout */
-  .prize-grid {
-    display: grid;
-    gap: 6px;
-    grid-template-columns: 1fr 1fr auto;
-  }
-  .prize-name-full { grid-column: 1 / -1; }
-  @media (min-width: 480px) {
-    .prize-grid {
-      grid-template-columns: 2fr 1.1fr 1fr auto;
-    }
-    .prize-name-full { grid-column: auto; }
-  }
-
-  /* Modal */
-  .modal-overlay {
-    position: fixed; inset: 0;
-    background: rgba(0,0,0,0.7);
-    z-index: 200;
-    display: flex; align-items: center; justify-content: center;
-    padding: 16px;
-  }
-  .modal-box {
-    background: #16213e;
-    border: 1px solid rgba(255,203,5,0.5);
-    border-radius: 16px;
-    padding: 24px;
-    width: 100%; max-width: 360px;
-  }
-
-  /* Oripa slots */
-  .slot-btn {
-    background: rgba(255,203,5,0.08);
-    border: 1px solid rgba(255,203,5,0.25);
-    color: rgba(255,255,255,0.75);
-    border-radius: 8px;
-    padding: 5px 10px;
-    font-size: 0.75rem;
-    cursor: pointer;
-    transition: all 0.15s;
-    white-space: nowrap;
-    max-width: 120px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-  .slot-btn:hover { background: rgba(255,203,5,0.18); border-color: #FFCB05; color:#fff; }
-  .slot-btn.active { background: rgba(255,203,5,0.22); border-color: #FFCB05; color: #FFCB05; font-weight: 700; }
-  .slot-del {
-    background: rgba(204,0,0,0.15);
-    border: 1px solid rgba(204,0,0,0.35);
-    color: #f87171;
-    border-radius: 6px;
-    padding: 3px 7px;
-    font-size: 0.7rem;
-    cursor: pointer;
-    transition: all 0.15s;
-  }
-  .slot-del:hover { background: rgba(204,0,0,0.4); }
-
-  /* Quick set buttons */
-  .quick-btn {
-    background: rgba(255,203,5,0.1);
-    border: 1px solid rgba(255,203,5,0.3);
-    color: #FFCB05;
-    border-radius: 8px;
-    padding: 6px 10px;
-    font-size: 0.8rem;
-    cursor: pointer;
-    transition: all 0.15s;
-  }
-  .quick-btn:hover {
-    background: rgba(255,203,5,0.25);
-    border-color: #FFCB05;
-  }
+*{box-sizing:border-box;margin:0;padding:0;font-family:-apple-system,"PingFang HK",sans-serif}
+body{background:#0f172a;color:#e2e8f0;padding:env(safe-area-inset-top) 0 80px}
+header{padding:16px;font-size:22px;font-weight:700}
+.card{background:#1e293b;margin:10px 14px;padding:14px;border-radius:14px}
+.row{display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid #334155}
+.row:last-child{border:0}
+.muted{color:#94a3b8;font-size:13px}
+.inc{color:#4ade80}.exp{color:#f87171}
+input,select,button{width:100%;padding:11px;margin:5px 0;border-radius:10px;border:1px solid #334155;background:#0f172a;color:#e2e8f0;font-size:16px}
+button{background:#3b82f6;border:0;font-weight:600}
+button.sm{width:auto;padding:4px 10px;font-size:13px;background:#475569;margin:0}
+.bar{height:8px;background:#334155;border-radius:4px;overflow:hidden;margin-top:4px}
+.bar>div{height:100%}
+nav{position:fixed;bottom:0;left:0;right:0;display:flex;background:#1e293b;padding-bottom:env(safe-area-inset-bottom);border-top:1px solid #334155}
+nav a{flex:1;text-align:center;padding:10px 0;font-size:12px;color:#94a3b8;text-decoration:none}
+nav a.on{color:#60a5fa}
+nav a span{display:block;font-size:20px}
+.page{display:none}.page.on{display:block}
+.big{font-size:26px;font-weight:700}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+canvas{width:100%}
+.alert{background:#7f1d1d;color:#fecaca;padding:10px;border-radius:10px;margin:10px 14px}
 </style>
 </head>
-<body class="p-3 sm:p-4">
+<body>
+<header id="title">我的財務</header>
+<div id="alerts"></div>
 
-<!-- Header -->
-<div class="max-w-6xl mx-auto mb-4">
-  <div class="flex items-start justify-between gap-3">
-    <div>
-      <h1 class="text-lg sm:text-2xl font-black text-white leading-tight">
-        <span style="color:#FFCB05">⚡</span> Pokémon オリパ 計算器
-      </h1>
-      <p class="text-xs mt-0.5" style="color:rgba(255,255,255,0.45)">福袋抽 期望值・風險分析工具</p>
-    </div>
-    <div class="flex gap-2 flex-shrink-0">
-      <button onclick="exportCSV()" class="btn-secondary px-3 py-2 rounded-lg text-xs sm:text-sm flex items-center gap-1">
-        📤 <span class="hidden sm:inline">匯出 </span>CSV
-      </button>
-      <label class="btn-secondary px-3 py-2 rounded-lg text-xs sm:text-sm flex items-center gap-1 cursor-pointer">
-        📥 <span class="hidden sm:inline">匯入 </span>CSV
-        <input type="file" accept=".csv" onchange="importCSV(event)" class="hidden">
-      </label>
-    </div>
+<!-- 記帳 -->
+<section class="page on" id="p-tx">
+ <div class="card">
+  <div class="muted">本月結餘</div><div class="big" id="bal"></div>
+  <div class="grid2"><div>收入 <span class="inc" id="mInc"></span></div><div>支出 <span class="exp" id="mExp"></span></div></div>
+ </div>
+ <div class="card">
+  <div class="grid2">
+   <select id="tType"><option value="exp">支出</option><option value="inc">收入</option></select>
+   <input id="tDate" type="date">
   </div>
+  <select id="tCat"></select>
+  <input id="tAmt" type="number" inputmode="decimal" placeholder="金額 (HKD)">
+  <input id="tNote" placeholder="備註">
+  <button onclick="addTx()">新增記錄</button>
+ </div>
+ <div class="card" id="txList"></div>
+</section>
 
-  <!-- Oripa Manager Bar -->
-  <div class="mt-3 card rounded-xl px-3 py-2.5 flex flex-wrap items-center gap-2">
-    <span class="text-xs font-bold" style="color:#FFCB05">📂 我的オリパ：</span>
-    <div id="oripaTabsWrapper" class="flex flex-wrap gap-1.5 flex-1 min-w-0"></div>
-    <div class="flex gap-1.5 flex-shrink-0">
-      <button onclick="newOripa()" class="quick-btn text-xs px-2.5 py-1.5">＋ 新增</button>
-      <button onclick="renameOripa()" class="quick-btn text-xs px-2.5 py-1.5">✏️ 改名</button>
-      <button onclick="deleteOripa()" class="quick-btn text-xs px-2.5 py-1.5" style="color:#f87171;border-color:rgba(248,113,113,0.4)">🗑 刪除</button>
-    </div>
+<!-- 預算 -->
+<section class="page" id="p-bud">
+ <div class="card">
+  <select id="bCat"></select>
+  <input id="bAmt" type="number" inputmode="decimal" placeholder="每月預算 (HKD)">
+  <button onclick="setBudget()">設定預算</button>
+ </div>
+ <div class="card" id="budList"></div>
+</section>
+
+<!-- 資產 -->
+<section class="page" id="p-ast">
+ <div class="card"><div class="muted">總資產市值</div><div class="big" id="astTotal"></div><div id="astPL"></div></div>
+ <div class="card">
+  <select id="aType"><option>股票</option><option>基金/ETF</option><option>加密貨幣</option><option>現金/存款</option><option>其他</option></select>
+  <input id="aName" placeholder="名稱 / 代號 (如 0700.HK)">
+  <div class="grid2">
+   <input id="aQty" type="number" inputmode="decimal" placeholder="數量">
+   <input id="aCost" type="number" inputmode="decimal" placeholder="平均成本">
   </div>
-</div>
+  <input id="aPrice" type="number" inputmode="decimal" placeholder="現價">
+  <button onclick="addAsset()">新增 / 更新資產</button>
+ </div>
+ <div class="card" id="astList"></div>
+</section>
 
-<div class="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-4">
+<!-- 報告 -->
+<section class="page" id="p-rpt">
+ <div class="card"><div class="muted">本月支出分類</div><canvas id="pie" height="260"></canvas><div id="legend"></div></div>
+ <div class="card"><div class="muted">近 6 個月收支</div><canvas id="barc" height="220"></canvas></div>
+ <div class="card"><div class="muted">資產配置</div><canvas id="pie2" height="260"></canvas><div id="legend2"></div></div>
+</section>
 
-  <!-- Left Panel -->
-  <div class="lg:col-span-2 space-y-4">
+<!-- 設定 -->
+<section class="page" id="p-set">
+ <div class="card">
+  <b>匯出 CSV</b>
+  <button onclick="exportCSV('tx')">匯出收支記錄</button>
+  <button onclick="exportCSV('ast')">匯出資產</button>
+ </div>
+ <div class="card">
+  <b>同步 Google Sheets</b>
+  <p class="muted">貼上 Google Apps Script Web App 網址（見說明）</p>
+  <input id="gsUrl" placeholder="https://script.google.com/macros/s/.../exec">
+  <button onclick="saveGs()">儲存網址</button>
+  <button onclick="syncGs()">立即同步</button>
+ </div>
+ <div class="card">
+  <b>備份 / 還原</b>
+  <button onclick="backup()">下載完整備份 (JSON)</button>
+  <input type="file" id="restoreF" accept=".json" onchange="restore(this)">
+ </div>
+ <div class="card">
+  <b>分類管理</b>
+  <input id="newCat" placeholder="新支出分類">
+  <button onclick="addCat()">加入分類</button>
+ </div>
+</section>
 
-    <!-- Basic Settings -->
-    <div class="card rounded-xl p-4">
-      <div class="section-title">⚙️ 基本設定</div>
-      <div class="grid grid-cols-2 gap-3">
-        <div>
-          <label class="text-xs text-gray-400 mb-1 block">💴 單抽價格</label>
-          <div class="flex gap-2">
-            <select id="currency" onchange="recalc()" class="pokemon-input rounded-lg px-2 py-2.5 text-sm" style="width:72px">
-              <option value="HKD">HKD</option>
-              <option value="JPY">JPY</option>
-              <option value="USD">USD</option>
-              <option value="TWD">TWD</option>
-            </select>
-            <input type="number" id="packPrice" min="0" step="0.1" value="30"
-              oninput="recalc()" placeholder="價格"
-              class="pokemon-input rounded-lg px-3 py-2.5 text-sm flex-1 min-w-0">
-          </div>
-        </div>
-        <div>
-          <label class="text-xs text-gray-400 mb-1 block">🎴 總口數</label>
-          <input type="number" id="totalPacks" min="1" step="1" value="100"
-            oninput="recalc()" placeholder="總口數"
-            class="pokemon-input rounded-lg px-3 py-2.5 text-sm w-full">
-        </div>
-      </div>
-      <div id="packWarning" class="mt-2 hidden"></div>
-    </div>
-
-    <!-- Prize List -->
-    <div class="card rounded-xl p-4">
-      <div class="section-title flex items-center justify-between">
-        <span>🏆 獎項設定</span>
-        <span id="prizeCountBadge" class="text-xs font-bold px-2 py-0.5 rounded-full" style="background:rgba(255,203,5,0.15);color:#FFCB05;border:1px solid rgba(255,203,5,0.35)">0 項</span>
-      </div>
-
-      <!-- Quick set row -->
-      <div class="flex flex-wrap items-center gap-2 mb-3 pb-3 border-b border-yellow-500/10">
-        <span class="text-xs text-gray-400 whitespace-nowrap">快速設定獎項數：</span>
-        <div class="flex flex-wrap gap-1.5">
-          <button class="quick-btn" onclick="setBulkPrizes(3)">3項</button>
-          <button class="quick-btn" onclick="setBulkPrizes(5)">5項</button>
-          <button class="quick-btn" onclick="setBulkPrizes(8)">8項</button>
-          <button class="quick-btn" onclick="setBulkPrizes(10)">10項</button>
-          <button class="quick-btn" onclick="openCustomBulk()">自訂…</button>
-        </div>
-      </div>
-
-      <!-- Column Headers (desktop) -->
-      <div class="hidden sm:grid gap-2 mb-2 px-2" style="grid-template-columns: 2fr 1.1fr 1fr auto">
-        <div class="text-xs text-gray-500 font-semibold">獎項名稱</div>
-        <div class="text-xs text-gray-500 font-semibold">市值 ($)</div>
-        <div class="text-xs text-gray-500 font-semibold">數量 (口)</div>
-        <div class="w-8"></div>
-      </div>
-
-      <div id="prizeList" class="space-y-2 scrollable pr-0.5"></div>
-
-      <!-- Remainder Row -->
-      <div id="remainderRow" class="remainder-row rounded-lg mt-3 hidden p-2.5">
-        <div class="flex flex-col sm:flex-row sm:items-center gap-2">
-          <div class="text-xs font-semibold flex-shrink-0" style="color:rgba(255,203,5,0.8)">🔸 剩餘保底底料</div>
-          <div class="flex gap-2 items-center">
-            <input type="number" id="remainderValue" min="0" step="0.1" value="0"
-              oninput="recalc()" placeholder="市值"
-              class="pokemon-input rounded-lg px-2 py-1.5 text-sm w-28">
-            <div id="remainderQty" class="text-sm font-semibold" style="color:rgba(255,203,5,0.8)">0 口</div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Add Prize Button -->
-      <button onclick="addPrize()" class="btn-primary mt-3 px-4 py-2.5 rounded-lg text-sm w-full">
-        ＋ 新增獎項
-      </button>
-
-      <!-- Pack usage summary -->
-      <div class="mt-3 flex items-center gap-3">
-        <div class="flex-1 bg-gray-800 rounded-full h-2">
-          <div id="packBar" class="h-2 rounded-full transition-all duration-300" style="background: linear-gradient(90deg, #FFCB05, #FF6B00); width: 0%"></div>
-        </div>
-        <div id="packUsageTxt" class="text-xs text-gray-400 whitespace-nowrap">0 / 0 口</div>
-      </div>
-    </div>
-
-    <!-- Stats (mobile only, shown between prize list and simulation) -->
-    <div class="lg:hidden card rounded-xl p-4">
-      <div class="section-title">📊 分析結果</div>
-      <div class="grid grid-cols-2 gap-2 mb-2">
-        <div class="stat-card">
-          <div id="evValM" class="stat-value text-2xl">—</div>
-          <div class="stat-label">單抽期望值 (EV)</div>
-        </div>
-        <div class="stat-card">
-          <div id="evPctM" class="stat-value text-2xl">—</div>
-          <div class="stat-label">回本率 (EV%)</div>
-        </div>
-      </div>
-      <div class="grid grid-cols-3 gap-2 mb-2">
-        <div class="stat-card">
-          <div id="profitPctM" class="stat-value profit text-xl">—</div>
-          <div class="stat-label">賺 🟢</div>
-        </div>
-        <div class="stat-card">
-          <div id="breakPctM" class="stat-value break text-xl">—</div>
-          <div class="stat-label">平 🟡</div>
-        </div>
-        <div class="stat-card">
-          <div id="lossPctM" class="stat-value loss text-xl">—</div>
-          <div class="stat-label">虧 🔴</div>
-        </div>
-      </div>
-      <div class="stat-card">
-        <div id="poolEVM" class="stat-value text-purple-400 text-xl">—</div>
-        <div class="stat-label">整池期望總值</div>
-      </div>
-    </div>
-
-    <!-- Simulation -->
-    <div class="card rounded-xl p-4">
-      <div class="section-title">🎲 模擬抽卡</div>
-      <div class="flex flex-col sm:flex-row gap-2 items-stretch sm:items-end">
-        <div class="flex-1">
-          <label class="text-xs text-gray-400 mb-1 block">模擬抽幾口？</label>
-          <input type="number" id="simCount" min="1" max="10000" value="10"
-            class="pokemon-input rounded-lg px-3 py-2.5 text-sm w-full" placeholder="例如 10">
-        </div>
-        <div class="flex gap-2">
-          <button onclick="runSimulation()" class="btn-primary px-5 py-2.5 rounded-lg text-sm flex-1 sm:flex-none">
-            ▶ 開始模擬
-          </button>
-          <button onclick="clearSim()" class="btn-secondary px-4 py-2.5 rounded-lg text-sm">
-            🗑
-          </button>
-        </div>
-      </div>
-      <div id="simResults" class="mt-3 space-y-1 scrollable hidden"></div>
-      <div id="simSummary" class="mt-3 hidden"></div>
-    </div>
-
-    <!-- Pie Chart (mobile only) -->
-    <div class="lg:hidden card rounded-xl p-4">
-      <div class="section-title">🥧 機率分布</div>
-      <div class="flex justify-center">
-        <canvas id="pieChartM" style="max-height:200px"></canvas>
-      </div>
-      <div id="chartLegendM" class="mt-3 space-y-1 text-xs"></div>
-    </div>
-
-  </div>
-
-  <!-- Right Panel (desktop only) -->
-  <div class="space-y-4 hidden lg:block">
-
-    <!-- Stats Dashboard -->
-    <div class="card rounded-xl p-5">
-      <div class="section-title">📊 分析結果</div>
-      <div class="space-y-3">
-        <div class="stat-card">
-          <div id="evVal" class="stat-value">—</div>
-          <div class="stat-label">單抽期望值 (EV)</div>
-        </div>
-        <div class="stat-card">
-          <div id="evPct" class="stat-value">—</div>
-          <div class="stat-label">期望值回本率 (EV%)</div>
-        </div>
-        <div class="grid grid-cols-3 gap-2">
-          <div class="stat-card">
-            <div id="profitPct" class="stat-value profit text-2xl">—</div>
-            <div class="stat-label">賺錢 🟢</div>
-          </div>
-          <div class="stat-card">
-            <div id="breakPct" class="stat-value break text-2xl">—</div>
-            <div class="stat-label">平手 🟡</div>
-          </div>
-          <div class="stat-card">
-            <div id="lossPct" class="stat-value loss text-2xl">—</div>
-            <div class="stat-label">虧損 🔴</div>
-          </div>
-        </div>
-        <div class="stat-card">
-          <div id="poolEV" class="stat-value text-purple-400 text-xl">—</div>
-          <div class="stat-label">整池期望總值</div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Pie Chart -->
-    <div class="card rounded-xl p-5">
-      <div class="section-title">🥧 機率分布</div>
-      <div class="flex justify-center">
-        <canvas id="pieChart"></canvas>
-      </div>
-      <div id="chartLegend" class="mt-3 space-y-1 text-xs"></div>
-    </div>
-
-  </div>
-
-</div>
-
-<div class="max-w-6xl mx-auto mt-4 mb-6 text-center text-xs" style="color:rgba(255,255,255,0.25)">
-  ⚠️ 本工具僅供參考，不構成任何投資建議。實際抽卡結果存在隨機性。
-</div>
-
-<!-- Custom bulk modal -->
-<div id="bulkModal" class="modal-overlay hidden">
-  <div class="modal-box">
-    <div class="text-base font-bold text-yellow-400 mb-4">⚡ 設定獎項數量</div>
-    <p class="text-xs text-gray-400 mb-3">輸入想要的獎項種類數量，系統會自動建立空白獎項列。<br>⚠️ 現有獎項將被清除。</p>
-    <input type="number" id="bulkCount" min="1" max="50" value="6"
-      class="pokemon-input rounded-lg px-3 py-2.5 text-sm w-full mb-4" placeholder="輸入數量 (1~50)">
-    <div class="flex gap-2">
-      <button onclick="confirmBulk()" class="btn-primary flex-1 px-4 py-2.5 rounded-lg text-sm">✓ 確定</button>
-      <button onclick="closeBulkModal()" class="btn-secondary flex-1 px-4 py-2.5 rounded-lg text-sm">✕ 取消</button>
-    </div>
-  </div>
-</div>
+<nav>
+ <a href="#" data-p="tx" class="on"><span>💰</span>記帳</a>
+ <a href="#" data-p="bud"><span>🎯</span>預算</a>
+ <a href="#" data-p="ast"><span>📈</span>資產</a>
+ <a href="#" data-p="rpt"><span>📊</span>報告</a>
+ <a href="#" data-p="set"><span>⚙️</span>設定</a>
+</nav>
 
 <script>
-let prizes = [];
-let pieChart = null;
-let pieChartM = null;
-let prizeIdCounter = 0;
+const K='myfin_v1';
+const LS=(()=>{try{const s=window.localStorage;s.setItem('_t','1');s.removeItem('_t');return s}catch(e){const m={};return{getItem:k=>m[k]??null,setItem:(k,v)=>m[k]=String(v)}}})();
+let D=JSON.parse(LS.getItem(K)||'null')||{
+ tx:[],budgets:{},assets:[],gsUrl:'',
+ cats:{exp:['飲食','交通','購物','住屋','娛樂','醫療','保險','教育','其他'],inc:['薪金','花紅','投資收益','副業','其他']}
+};
+const save=()=>{LS.setItem(K,JSON.stringify(D));render()};
+const $=id=>document.getElementById(id);
+const fmt=n=>'$'+(+n).toLocaleString('zh-HK',{minimumFractionDigits:0,maximumFractionDigits:2});
+const ym=d=>d.slice(0,7);
+const thisM=()=>new Date().toISOString().slice(0,7);
+const COLORS=['#60a5fa','#f87171','#4ade80','#facc15','#c084fc','#fb923c','#2dd4bf','#f472b6','#a3e635','#94a3b8'];
 
-// --- Oripa Storage ---
-const STORE_KEY = 'pokemon_oripa_list';
-let oripaList = []; // [{id, name, config}]
-let currentOripaId = null;
-
-function loadOripaStore() {
-  try { oripaList = JSON.parse(localStorage.getItem(STORE_KEY)) || []; } catch(e) { oripaList = []; }
-}
-
-function saveOripaStore() {
-  localStorage.setItem(STORE_KEY, JSON.stringify(oripaList));
-}
-
-function getConfig() {
-  return {
-    packPrice: document.getElementById('packPrice').value,
-    totalPacks: document.getElementById('totalPacks').value,
-    currency: document.getElementById('currency').value,
-    remainderValue: document.getElementById('remainderValue').value,
-    prizes: prizes.map(p => ({ ...p }))
-  };
-}
-
-function applyConfig(cfg) {
-  if (!cfg) return;
-  if (cfg.packPrice !== undefined) document.getElementById('packPrice').value = cfg.packPrice;
-  if (cfg.totalPacks !== undefined) document.getElementById('totalPacks').value = cfg.totalPacks;
-  if (cfg.currency !== undefined) document.getElementById('currency').value = cfg.currency;
-  if (cfg.remainderValue !== undefined) document.getElementById('remainderValue').value = cfg.remainderValue;
-  prizes = [];
-  document.getElementById('prizeList').innerHTML = '';
-  prizeIdCounter = 0;
-  if (cfg.prizes && cfg.prizes.length > 0) {
-    cfg.prizes.forEach(p => {
-      const id = ++prizeIdCounter;
-      prizes.push({ ...p, id });
-      renderPrizeRow(prizes[prizes.length - 1]);
-    });
-  }
-  recalc();
-}
-
-function saveCurrentOripa() {
-  if (!currentOripaId) return;
-  const slot = oripaList.find(o => o.id === currentOripaId);
-  if (slot) { slot.config = getConfig(); saveOripaStore(); }
-}
-
-function renderOripaTabs() {
-  const wrapper = document.getElementById('oripaTabsWrapper');
-  if (!wrapper) return;
-  if (oripaList.length === 0) {
-    wrapper.innerHTML = '<span class="text-xs text-gray-500 italic">尚無儲存的オリパ</span>';
-    return;
-  }
-  wrapper.innerHTML = oripaList.map(o => `
-    <button onclick="switchOripa('${o.id}')"
-      class="slot-btn text-xs px-2.5 py-1 rounded-lg border transition-all ${o.id === currentOripaId
-        ? 'slot-btn-active'
-        : ''}"
-      style="${o.id === currentOripaId
-        ? 'background:rgba(255,203,5,0.25);border-color:#FFCB05;color:#FFCB05;font-weight:700;'
-        : 'background:rgba(255,255,255,0.05);border-color:rgba(255,255,255,0.15);color:rgba(255,255,255,0.7);'}"
-    >${escHtml(o.name)}</button>
-  `).join('');
-}
-
-function newOripa() {
-  const name = prompt('新オリパ名稱：', `オリパ ${oripaList.length + 1}`);
-  if (!name) return;
-  saveCurrentOripa();
-  const id = 'oripa_' + Date.now();
-  const config = getConfig();
-  oripaList.push({ id, name, config });
-  currentOripaId = id;
-  saveOripaStore();
-  renderOripaTabs();
-}
-
-function switchOripa(id) {
-  if (id === currentOripaId) return;
-  saveCurrentOripa();
-  const slot = oripaList.find(o => o.id === id);
-  if (!slot) return;
-  currentOripaId = id;
-  applyConfig(slot.config);
-  renderOripaTabs();
-}
-
-function renameOripa() {
-  if (!currentOripaId) { alert('請先選擇或建立一個オリパ'); return; }
-  const slot = oripaList.find(o => o.id === currentOripaId);
-  if (!slot) return;
-  const name = prompt('新名稱：', slot.name);
-  if (!name) return;
-  slot.name = name;
-  saveOripaStore();
-  renderOripaTabs();
-}
-
-function deleteOripa() {
-  if (!currentOripaId) { alert('請先選擇一個オリパ'); return; }
-  const slot = oripaList.find(o => o.id === currentOripaId);
-  if (!slot) return;
-  if (!confirm(`確定刪除「${slot.name}」？`)) return;
-  oripaList = oripaList.filter(o => o.id !== currentOripaId);
-  currentOripaId = oripaList.length > 0 ? oripaList[oripaList.length - 1].id : null;
-  saveOripaStore();
-  if (currentOripaId) {
-    const next = oripaList.find(o => o.id === currentOripaId);
-    if (next) applyConfig(next.config);
-  }
-  renderOripaTabs();
-}
-
-// Auto-save on any recalc
-const _origRecalcHook = () => saveCurrentOripa();
-
-// --- Init ---
-function init() {
-  loadOripaStore();
-  renderOripaTabs();
-  // If there's a saved oripa, load the last one; otherwise start fresh
-  if (oripaList.length > 0) {
-    currentOripaId = oripaList[oripaList.length - 1].id;
-    applyConfig(oripaList[oripaList.length - 1].config);
-    renderOripaTabs();
-  } else {
-    addPrize('', 0, 1);
-    recalc();
-  }
-}
-
-// --- Bulk prize setting ---
-function setBulkPrizes(count) {
-  if (prizes.length > 0 && !confirm(`確定要清除現有 ${prizes.length} 項獎項，改設 ${count} 個空白獎項嗎？`)) return;
-  prizes = [];
-  document.getElementById('prizeList').innerHTML = '';
-  for (let i = 1; i <= count; i++) {
-    addPrize(`獎項 ${i}`, 0, 1);
-  }
-}
-
-function openCustomBulk() {
-  document.getElementById('bulkModal').classList.remove('hidden');
-  document.getElementById('bulkCount').focus();
-}
-
-function closeBulkModal() {
-  document.getElementById('bulkModal').classList.add('hidden');
-}
-
-function confirmBulk() {
-  const n = parseInt(document.getElementById('bulkCount').value) || 0;
-  if (n < 1 || n > 50) { alert('請輸入 1~50 之間的數字'); return; }
-  closeBulkModal();
-  setBulkPrizes(n);
-}
-
-// Close modal on overlay click
-document.getElementById('bulkModal').addEventListener('click', function(e) {
-  if (e.target === this) closeBulkModal();
+// nav
+document.querySelectorAll('nav a').forEach(a=>a.onclick=e=>{e.preventDefault();
+ document.querySelectorAll('nav a').forEach(x=>x.classList.remove('on'));a.classList.add('on');
+ document.querySelectorAll('.page').forEach(p=>p.classList.remove('on'));$('p-'+a.dataset.p).classList.add('on');
+ $('title').textContent=a.textContent.trim().slice(2)||'我的財務';
+ if(a.dataset.p==='rpt')drawCharts();
 });
 
-// --- Prize CRUD ---
-function addPrize(name='', value=0, qty=1) {
-  const id = ++prizeIdCounter;
-  if (!name) name = `獎項 #${id}`;
-  prizes.push({ id, name, value, qty });
-  renderPrizeRow(prizes[prizes.length-1]);
-  recalc();
+function fillCats(){
+ $('tCat').innerHTML=D.cats[$('tType').value].map(c=>`<option>${c}</option>`).join('');
+ $('bCat').innerHTML=D.cats.exp.map(c=>`<option>${c}</option>`).join('');
+}
+$('tType').onchange=fillCats;
+$('tDate').value=new Date().toISOString().slice(0,10);
+
+function addTx(){
+ const amt=parseFloat($('tAmt').value);if(!amt)return alert('請輸入金額');
+ D.tx.unshift({id:Date.now(),type:$('tType').value,date:$('tDate').value,cat:$('tCat').value,amt,note:$('tNote').value});
+ $('tAmt').value='';$('tNote').value='';save();
+}
+function delTx(id){if(confirm('刪除此記錄？')){D.tx=D.tx.filter(t=>t.id!==id);save()}}
+function setBudget(){const v=parseFloat($('bAmt').value);if(v>0)D.budgets[$('bCat').value]=v;else delete D.budgets[$('bCat').value];$('bAmt').value='';save()}
+function addAsset(){
+ const name=$('aName').value.trim();if(!name)return;
+ const a={type:$('aType').value,name,qty:+$('aQty').value||0,cost:+$('aCost').value||0,price:+$('aPrice').value||0};
+ const i=D.assets.findIndex(x=>x.name===name);if(i>=0)D.assets[i]=a;else D.assets.push(a);
+ ['aName','aQty','aCost','aPrice'].forEach(i=>$(i).value='');save();
+}
+function editPrice(i){const p=prompt('更新現價',D.assets[i].price);if(p!==null){D.assets[i].price=+p;save()}}
+function delAsset(i){if(confirm('刪除？')){D.assets.splice(i,1);save()}}
+function addCat(){const c=$('newCat').value.trim();if(c&&!D.cats.exp.includes(c)){D.cats.exp.push(c);$('newCat').value='';save()}}
+
+function monthSpend(m){const s={};D.tx.filter(t=>t.type==='exp'&&ym(t.date)===m).forEach(t=>s[t.cat]=(s[t.cat]||0)+t.amt);return s}
+
+function render(){
+ fillCats();
+ const m=thisM(),mt=D.tx.filter(t=>ym(t.date)===m);
+ const inc=mt.filter(t=>t.type==='inc').reduce((a,t)=>a+t.amt,0),exp=mt.filter(t=>t.type==='exp').reduce((a,t)=>a+t.amt,0);
+ $('bal').textContent=fmt(inc-exp);$('mInc').textContent=fmt(inc);$('mExp').textContent=fmt(exp);
+ $('txList').innerHTML=D.tx.slice(0,100).map(t=>`<div class="row"><div><div>${t.cat} <span class="muted">${t.note||''}</span></div><div class="muted">${t.date}</div></div>
+  <div><span class="${t.type}">${t.type==='inc'?'+':'-'}${fmt(t.amt)}</span> <button class="sm" onclick="delTx(${t.id})">✕</button></div></div>`).join('')||'<div class="muted">尚未有記錄</div>';
+ // budgets
+ const sp=monthSpend(m);let al='';
+ $('budList').innerHTML=Object.entries(D.budgets).map(([c,b])=>{const u=sp[c]||0,p=Math.min(u/b*100,100);
+  const col=u>b?'#ef4444':p>=80?'#facc15':'#4ade80';
+  if(u>b)al+=`<div class="alert">⚠️ ${c} 已超出預算 ${fmt(u-b)}</div>`;else if(p>=80)al+=`<div class="alert" style="background:#713f12;color:#fef08a">🔔 ${c} 已用 ${p.toFixed(0)}% 預算</div>`;
+  return `<div class="row" style="display:block"><div style="display:flex;justify-content:space-between"><span>${c}</span><span class="muted">${fmt(u)} / ${fmt(b)}</span></div><div class="bar"><div style="width:${p}%;background:${col}"></div></div></div>`}).join('')||'<div class="muted">尚未設定預算</div>';
+ $('alerts').innerHTML=al;
+ // assets
+ let tot=0,cost=0;
+ $('astList').innerHTML=D.assets.map((a,i)=>{const v=a.qty*a.price,c=a.qty*a.cost,pl=v-c;tot+=v;cost+=c;
+  return `<div class="row"><div><div>${a.name} <span class="muted">${a.type}</span></div><div class="muted">${a.qty} × ${fmt(a.price)}</div></div>
+  <div style="text-align:right"><div>${fmt(v)}</div><div class="${pl>=0?'inc':'exp'}" style="font-size:13px">${pl>=0?'+':''}${fmt(pl)}${c?` (${(pl/c*100).toFixed(1)}%)`:''}</div>
+  <button class="sm" onclick="editPrice(${i})">改價</button> <button class="sm" onclick="delAsset(${i})">✕</button></div></div>`}).join('')||'<div class="muted">尚未有資產</div>';
+ $('astTotal').textContent=fmt(tot);
+ const pl=tot-cost;$('astPL').innerHTML=`<span class="${pl>=0?'inc':'exp'}">未實現盈虧 ${pl>=0?'+':''}${fmt(pl)}</span>`;
+ $('gsUrl').value=D.gsUrl||'';
 }
 
-function renderPrizeRow(prize) {
-  const container = document.getElementById('prizeList');
-  const div = document.createElement('div');
-  div.className = 'prize-row rounded-lg p-2';
-  div.id = `prize-row-${prize.id}`;
-  div.innerHTML = `
-    <div class="prize-grid items-center">
-      <input type="text" value="${escHtml(prize.name)}" placeholder="獎項名稱"
-        onchange="updatePrize(${prize.id},'name',this.value)"
-        class="pokemon-input rounded-lg px-2 py-2 text-sm prize-name-full">
-      <input type="number" value="${prize.value||''}" min="0" step="0.1" placeholder="市值"
-        onchange="updatePrize(${prize.id},'value',parseFloat(this.value)||0)"
-        oninput="updatePrize(${prize.id},'value',parseFloat(this.value)||0)"
-        class="pokemon-input rounded-lg px-2 py-2 text-sm min-w-0">
-      <div class="flex items-center gap-1 min-w-0">
-        <button onclick="stepQty(${prize.id},-1)" class="flex-shrink-0 w-7 h-8 rounded-lg text-sm font-bold flex items-center justify-center" style="background:rgba(255,203,5,0.15);border:1px solid rgba(255,203,5,0.3);color:#FFCB05">−</button>
-        <input type="number" id="qty-${prize.id}" value="${prize.qty||''}" min="0" step="1" placeholder="0"
-          onchange="updatePrize(${prize.id},'qty',parseInt(this.value)||0)"
-          oninput="updatePrize(${prize.id},'qty',parseInt(this.value)||0)"
-          class="pokemon-input rounded-lg px-1 py-2 text-sm text-center min-w-0 flex-1" style="min-width:36px">
-        <button onclick="stepQty(${prize.id},1)" class="flex-shrink-0 w-7 h-8 rounded-lg text-sm font-bold flex items-center justify-center" style="background:rgba(255,203,5,0.15);border:1px solid rgba(255,203,5,0.3);color:#FFCB05">＋</button>
-      </div>
-      <button onclick="removePrize(${prize.id})" class="btn-danger w-8 h-8 rounded-lg text-sm flex items-center justify-center flex-shrink-0">✕</button>
-    </div>`;
-  container.appendChild(div);
+// charts
+function setupCanvas(c){const r=window.devicePixelRatio||1,w=c.clientWidth,h=+c.getAttribute('height');c.width=w*r;c.height=h*r;const x=c.getContext('2d');x.scale(r,r);x.clearRect(0,0,w,h);return[x,w,h]}
+function pie(cid,lid,data){
+ const c=$(cid),[x,w,h]=setupCanvas(c),ent=Object.entries(data).filter(e=>e[1]>0),tot=ent.reduce((a,e)=>a+e[1],0);
+ if(!tot){x.fillStyle='#94a3b8';x.font='14px sans-serif';x.fillText('暫無數據',w/2-28,h/2);$(lid).innerHTML='';return}
+ let a=-Math.PI/2;const r=Math.min(w,h)/2-10;
+ ent.forEach(([k,v],i)=>{const s=v/tot*Math.PI*2;x.beginPath();x.moveTo(w/2,h/2);x.arc(w/2,h/2,r,a,a+s);x.fillStyle=COLORS[i%10];x.fill();a+=s});
+ x.beginPath();x.arc(w/2,h/2,r*.55,0,7);x.fillStyle='#1e293b';x.fill();
+ $(lid).innerHTML=ent.map(([k,v],i)=>`<div class="row"><span><span style="color:${COLORS[i%10]}">●</span> ${k}</span><span>${fmt(v)} (${(v/tot*100).toFixed(1)}%)</span></div>`).join('');
+}
+function drawCharts(){
+ pie('pie','legend',monthSpend(thisM()));
+ const al={};D.assets.forEach(a=>al[a.type]=(al[a.type]||0)+a.qty*a.price);pie('pie2','legend2',al);
+ const c=$('barc'),[x,w,h]=setupCanvas(c),ms=[];const d=new Date();
+ for(let i=5;i>=0;i--){const t=new Date(d.getFullYear(),d.getMonth()-i,1);ms.push(t.getFullYear()+'-'+String(t.getMonth()+1).padStart(2,'0'))}
+ const v=ms.map(m=>{const t=D.tx.filter(z=>ym(z.date)===m);return[t.filter(z=>z.type==='inc').reduce((a,z)=>a+z.amt,0),t.filter(z=>z.type==='exp').reduce((a,z)=>a+z.amt,0)]});
+ const mx=Math.max(1,...v.flat()),bw=(w-20)/6;x.font='11px sans-serif';
+ v.forEach(([i,e],k)=>{const bx=10+k*bw,ch=h-30;
+  x.fillStyle='#4ade80';x.fillRect(bx+bw*.15,ch-i/mx*ch+5,bw*.3,i/mx*ch);
+  x.fillStyle='#f87171';x.fillRect(bx+bw*.5,ch-e/mx*ch+5,bw*.3,e/mx*ch);
+  x.fillStyle='#94a3b8';x.fillText(ms[k].slice(5)+'月',bx+bw*.25,h-8)});
 }
 
-function escHtml(str) {
-  return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+// export
+function dl(name,text,type){const a=document.createElement('a');a.href=URL.createObjectURL(new Blob(['\ufeff'+text],{type}));a.download=name;a.click()}
+const esc=v=>`"${String(v??'').replace(/"/g,'""')}"`;
+function exportCSV(k){
+ if(k==='tx')dl('收支記錄.csv',['日期,類型,分類,金額,備註',...D.tx.map(t=>[t.date,t.type==='inc'?'收入':'支出',t.cat,t.amt,t.note].map(esc).join(','))].join('\n'),'text/csv');
+ else dl('資產.csv',['類型,名稱,數量,成本,現價,市值',...D.assets.map(a=>[a.type,a.name,a.qty,a.cost,a.price,a.qty*a.price].map(esc).join(','))].join('\n'),'text/csv');
+}
+function backup(){dl('myfin_backup_'+new Date().toISOString().slice(0,10)+'.json',JSON.stringify(D),'application/json')}
+function restore(inp){const f=inp.files[0];if(!f)return;f.text().then(t=>{if(confirm('還原會覆蓋現有資料，確定？')){D=JSON.parse(t);save();alert('已還原')}})}
+function saveGs(){D.gsUrl=$('gsUrl').value.trim();save();alert('已儲存')}
+async function syncGs(){
+ if(!D.gsUrl)return alert('請先設定 Apps Script 網址');
+ try{await fetch(D.gsUrl,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain'},body:JSON.stringify({tx:D.tx,assets:D.assets})});alert('已送出同步，請到 Google Sheets 查看')}
+ catch(e){alert('同步失敗：'+e.message)}
 }
 
-function stepQty(id, delta) {
-  const p = prizes.find(p => p.id === id);
-  if (!p) return;
-  p.qty = Math.max(0, (parseInt(p.qty)||0) + delta);
-  const input = document.getElementById(`qty-${id}`);
-  if (input) input.value = p.qty;
-  recalc();
+try{if('serviceWorker' in navigator&&location.protocol==='https:')navigator.serviceWorker.register('sw.js').catch(()=>{})}catch(e){}
+
+// ===== 自動記帳：由 iPhone 捷徑（Apple Pay / 銀行短訊）傳入 =====
+const AUTO_CAT=[[/麥當勞|mcdonald|starbucks|大家樂|美心|cafe|restaurant|餐|茶餐廳|foodpanda|deliveroo|keeta/i,'飲食'],
+ [/mtr|港鐵|octopus|八達通|uber|taxi|的士|巴士|kmb|citybus/i,'交通'],
+ [/hktvmall|amazon|taobao|淘寶|百佳|惠康|parknshop|wellcome|759|uniqlo|apple/i,'購物'],
+ [/netflix|spotify|disney|steam|cinema|戲院/i,'娛樂'],
+ [/clinic|醫|pharmacy|藥|watsons|屈臣氏|mannings|萬寧/i,'醫療']];
+function guessCat(s){for(const[r,c]of AUTO_CAT)if(r.test(s||''))return D.cats.exp.includes(c)?c:'其他';return '其他'}
+function parseAmt(t){const m=String(t||'').replace(/,/g,'').match(/(?:HKD|HK\$|\$)\s*([0-9]+(?:\.[0-9]{1,2})?)|([0-9]+\.[0-9]{2})/i);return m?parseFloat(m[1]||m[2]):0}
+function autoAdd(p){
+ const amt=parseFloat(p.amt)||parseAmt(p.text);if(!amt)return false;
+ const merchant=p.merchant||'';
+ const isInc=/入賬|存入|credit|received|收到/i.test(p.text||'');
+ D.tx.unshift({id:Date.now()+Math.random(),type:isInc?'inc':'exp',date:(p.time?new Date(p.time):new Date()).toISOString().slice(0,10),
+  cat:isInc?'其他':guessCat(merchant+' '+(p.text||'')),amt,note:'🔔 '+(merchant||p.source||'自動'),auto:true});
+ return true;
 }
-
-function updatePrize(id, field, val) {
-  const p = prizes.find(p => p.id === id);
-  if (p) {
-    p[field] = val;
-    if (field === 'value') sortAndRenderPrizes();
-    else recalc();
-  }
+async function pullPending(){
+ if(!D.gsUrl)return;
+ try{const r=await fetch(D.gsUrl+'?action=pull');const list=await r.json();
+  let n=0;list.forEach(p=>{if(autoAdd(p))n++});
+  if(n){save();$('alerts').insertAdjacentHTML('afterbegin',`<div class="alert" style="background:#1e3a8a;color:#bfdbfe">🔔 已自動加入 ${n} 筆通知記錄，請檢查分類</div>`)}
+ }catch(e){console.log('pull failed',e)}
 }
-
-function sortAndRenderPrizes() {
-  prizes.sort((a, b) => (parseFloat(b.value)||0) - (parseFloat(a.value)||0));
-  const container = document.getElementById('prizeList');
-  container.innerHTML = '';
-  prizes.forEach(p => renderPrizeRow(p));
-  recalc();
-}
-
-function removePrize(id) {
-  prizes = prizes.filter(p => p.id !== id);
-  const row = document.getElementById(`prize-row-${id}`);
-  if (row) row.remove();
-  recalc();
-}
-
-// --- Core Calculation ---
-function recalc() {
-  const packPrice = parseFloat(document.getElementById('packPrice').value) || 0;
-  const totalPacks = parseInt(document.getElementById('totalPacks').value) || 0;
-  const currency = document.getElementById('currency').value;
-  const remainderValue = parseFloat(document.getElementById('remainderValue').value) || 0;
-
-  let usedPacks = prizes.reduce((s, p) => s + (parseInt(p.qty)||0), 0);
-  let remainder = totalPacks - usedPacks;
-
-  // Pack bar
-  const pct = totalPacks > 0 ? Math.min((usedPacks/totalPacks)*100, 100) : 0;
-  document.getElementById('packBar').style.width = pct + '%';
-  document.getElementById('packBar').style.background = pct > 100
-    ? 'linear-gradient(90deg,#f87171,#CC0000)'
-    : 'linear-gradient(90deg, #FFCB05, #FF6B00)';
-  document.getElementById('packUsageTxt').textContent = `${usedPacks} / ${totalPacks} 口`;
-  const badge = document.getElementById('prizeCountBadge');
-  if (badge) badge.textContent = prizes.length + ' 項';
-
-  // Warning
-  const warnEl = document.getElementById('packWarning');
-  if (usedPacks > totalPacks) {
-    warnEl.className = 'mt-2 error-text';
-    warnEl.textContent = `⚠️ 已設獎項數量 (${usedPacks}) 超過總口數 (${totalPacks})！`;
-    warnEl.classList.remove('hidden');
-  } else {
-    warnEl.classList.add('hidden');
-  }
-
-  // Remainder row
-  const remRow = document.getElementById('remainderRow');
-  if (remainder > 0) {
-    remRow.classList.remove('hidden');
-    document.getElementById('remainderQty').textContent = remainder + ' 口';
-  } else {
-    remRow.classList.add('hidden');
-  }
-
-  if (totalPacks <= 0 || packPrice <= 0) { clearStats(); return; }
-
-  let pool = prizes.map(p => ({ name: p.name || '未命名', value: parseFloat(p.value)||0, qty: parseInt(p.qty)||0 }));
-  if (remainder > 0) pool.push({ name: '保底底料', value: remainderValue, qty: remainder });
-
-  const effectiveTotal = pool.reduce((s,p) => s + p.qty, 0);
-  if (effectiveTotal <= 0) { clearStats(); return; }
-
-  const ev = pool.reduce((s,p) => s + p.value * (p.qty / effectiveTotal), 0);
-  const evPct = (ev / packPrice) * 100;
-  const poolEVVal = pool.reduce((s,p) => s + p.value * p.qty, 0);
-
-  const breakThreshold = packPrice * 0.9;
-  const profitQty = pool.filter(p => p.value > packPrice).reduce((s,p) => s+p.qty, 0);
-  const breakQty  = pool.filter(p => p.value <= packPrice && p.value > packPrice * 0.9).reduce((s,p) => s+p.qty, 0);
-  const lossQty   = pool.filter(p => p.value <= packPrice * 0.9).reduce((s,p) => s+p.qty, 0);
-
-  const profitProb = profitQty / effectiveTotal * 100;
-  const breakProb  = breakQty  / effectiveTotal * 100;
-  const lossProb   = lossQty   / effectiveTotal * 100;
-
-  const sym = getCurrencySymbol(currency);
-  const evClass = ev >= packPrice ? 'stat-value ev-positive' : 'stat-value ev-negative';
-  const evPctClass = evPct >= 100 ? 'stat-value ev-positive' : 'stat-value ev-negative';
-
-  // Update desktop stats
-  setEl('evVal', sym + ev.toFixed(2), evClass);
-  setEl('evPct', evPct.toFixed(1) + '%', evPctClass);
-  document.getElementById('profitPct').textContent = (profitProb % 1 === 0 ? profitProb.toFixed(0) : profitProb.toFixed(1)) + '%';
-  document.getElementById('breakPct').textContent  = (breakProb  % 1 === 0 ? breakProb.toFixed(0)  : breakProb.toFixed(1))  + '%';
-  document.getElementById('lossPct').textContent   = (lossProb   % 1 === 0 ? lossProb.toFixed(0)   : lossProb.toFixed(1))   + '%';
-  document.getElementById('poolEV').textContent    = sym + poolEVVal.toFixed(0);
-
-  // Update mobile stats
-  setEl('evValM', sym + ev.toFixed(2), evClass);
-  setEl('evPctM', evPct.toFixed(1) + '%', evPctClass);
-  document.getElementById('profitPctM').textContent = profitProb.toFixed(1) + '%';
-  document.getElementById('breakPctM').textContent  = breakProb.toFixed(1)  + '%';
-  document.getElementById('lossPctM').textContent   = lossProb.toFixed(1)   + '%';
-  document.getElementById('poolEVM').textContent    = sym + poolEVVal.toFixed(0);
-
-  // Pulse
-  ['evVal','evPct','poolEV','evValM','evPctM','poolEVM'].forEach(id => {
-    const el = document.getElementById(id);
-    if (!el) return;
-    el.classList.remove('animate-pulse-once');
-    void el.offsetWidth;
-    el.classList.add('animate-pulse-once');
-  });
-
-  updateChart(pool, effectiveTotal, packPrice);
-  saveCurrentOripa();
-}
-
-function setEl(id, text, className) {
-  const el = document.getElementById(id);
-  if (!el) return;
-  el.textContent = text;
-  if (className) el.className = className;
-}
-
-function clearStats() {
-  ['evVal','evPct','profitPct','breakPct','lossPct','poolEV',
-   'evValM','evPctM','profitPctM','breakPctM','lossPctM','poolEVM'].forEach(id => {
-    const el = document.getElementById(id);
-    if (el) el.textContent = '—';
-  });
-  if (pieChart) { pieChart.destroy(); pieChart = null; }
-  if (pieChartM) { pieChartM.destroy(); pieChartM = null; }
-  document.getElementById('chartLegend').innerHTML = '';
-  document.getElementById('chartLegendM').innerHTML = '';
-}
-
-function updateChart(pool, total, packPrice) {
-  const greens = ['#4ade80','#22c55e','#16a34a','#15803d','#86efac'];
-  const reds   = ['#f87171','#ef4444','#dc2626','#b91c1c','#fca5a5'];
-  let gi=0, ri=0;
-  const chartPool = pool.filter(p => p.qty > 0);
-  const finalColors = chartPool.map(p => {
-    if (p.value > packPrice) return greens[gi++ % greens.length];
-    if (p.value === packPrice) return '#fbbf24';
-    return reds[ri++ % reds.length];
-  });
-
-  const chartConfig = {
-    type: 'doughnut',
-    data: {
-      labels: chartPool.map(p => p.name),
-      datasets: [{
-        data: chartPool.map(p => p.qty),
-        backgroundColor: finalColors,
-        borderColor: 'rgba(22,33,62,0.8)',
-        borderWidth: 2
-      }]
-    },
-    options: {
-      responsive: true,
-      plugins: {
-        legend: { display: false },
-        tooltip: {
-          callbacks: {
-            label: function(ctx) {
-              const p = chartPool[ctx.dataIndex];
-              const prob = (p.qty/total*100).toFixed(1);
-              return ` ${p.name}: ${p.qty}口 (${prob}%)`;
-            }
-          }
-        }
-      }
-    }
-  };
-
-  // Desktop chart
-  if (pieChart) pieChart.destroy();
-  const ctx = document.getElementById('pieChart').getContext('2d');
-  pieChart = new Chart(ctx, JSON.parse(JSON.stringify(chartConfig)));
-
-  // Mobile chart
-  if (pieChartM) pieChartM.destroy();
-  const ctxM = document.getElementById('pieChartM').getContext('2d');
-  pieChartM = new Chart(ctxM, JSON.parse(JSON.stringify(chartConfig)));
-
-  // Legend (desktop)
-  const legendHtml = chartPool.map((p,i) => {
-    const prob = (p.qty/total*100).toFixed(1);
-    return `<div class="flex items-center gap-2">
-      <div class="w-3 h-3 rounded-sm flex-shrink-0" style="background:${finalColors[i]}"></div>
-      <span class="truncate" style="color:rgba(255,255,255,0.7)">${escHtml(p.name)}</span>
-      <span class="ml-auto text-gray-500 pl-2">${prob}%</span>
-    </div>`;
-  }).join('');
-  document.getElementById('chartLegend').innerHTML = legendHtml;
-  document.getElementById('chartLegendM').innerHTML = legendHtml;
-}
-
-// --- Simulation ---
-function runSimulation() {
-  const packPrice = parseFloat(document.getElementById('packPrice').value) || 0;
-  const totalPacks = parseInt(document.getElementById('totalPacks').value) || 0;
-  const currency = document.getElementById('currency').value;
-  const sym = getCurrencySymbol(currency);
-  let simCount = Math.min(parseInt(document.getElementById('simCount').value) || 10, 10000);
-
-  const remainderValue = parseFloat(document.getElementById('remainderValue').value) || 0;
-  let usedPacks = prizes.reduce((s,p) => s+(parseInt(p.qty)||0), 0);
-  let remainder = totalPacks - usedPacks;
-  let pool = prizes.map(p => ({ name: p.name||'未命名', value: parseFloat(p.value)||0, qty: parseInt(p.qty)||0 }));
-  if (remainder > 0) pool.push({ name: '保底底料', value: remainderValue, qty: remainder });
-
-  const effectiveTotal = pool.reduce((s,p)=>s+p.qty,0);
-  if (effectiveTotal <= 0 || packPrice <= 0) { alert('請先設定有效的獎項和價格！'); return; }
-
-  let weighted = [];
-  pool.forEach(p => { for(let i=0;i<p.qty;i++) weighted.push(p); });
-
-  let results = [];
-  let totalSpent = 0, totalEarned = 0;
-  for (let i=0; i<simCount; i++) {
-    const prize = weighted[Math.floor(Math.random() * weighted.length)];
-    totalSpent += packPrice;
-    totalEarned += prize.value;
-    results.push({ round: i+1, prize: prize.name, value: prize.value, pnl: prize.value - packPrice });
-  }
-
-  const netPnl = totalEarned - totalSpent;
-  const container = document.getElementById('simResults');
-  container.classList.remove('hidden');
-
-  const displayResults = simCount > 50 ? results.slice(-50) : results;
-  container.innerHTML = (simCount > 50 ? `<div class="text-xs text-gray-500 mb-2">（顯示最後 50 口，共 ${simCount} 口）</div>` : '') +
-    displayResults.map(r => {
-      const color = r.pnl > 0 ? '#4ade80' : r.pnl === 0 ? '#fbbf24' : '#f87171';
-      const icon = r.pnl > 0 ? '✅' : r.pnl === 0 ? '➖' : '❌';
-      return `<div class="sim-result-row" style="border-color:${color}">
-        <span class="text-gray-400 text-xs">#${r.round}</span>
-        <span class="font-semibold flex-1" style="color:${color}">${icon} ${escHtml(r.prize)}</span>
-        <span class="text-gray-400 text-xs">${sym}${r.value}</span>
-        <span class="font-bold text-xs" style="color:${color}">${r.pnl>=0?'+':''}${sym}${r.pnl.toFixed(2)}</span>
-      </div>`;
-    }).join('');
-
-  const summaryEl = document.getElementById('simSummary');
-  summaryEl.classList.remove('hidden');
-  const netColor = netPnl >= 0 ? '#4ade80' : '#f87171';
-  const winRate = (results.filter(r=>r.pnl>0).length/simCount*100).toFixed(1);
-  summaryEl.innerHTML = `
-    <div class="grid grid-cols-2 gap-2 mt-2">
-      <div class="stat-card">
-        <div class="text-sm font-bold" style="color:${netColor}">${netPnl>=0?'+':''}${sym}${netPnl.toFixed(2)}</div>
-        <div class="stat-label">模擬總損益</div>
-      </div>
-      <div class="stat-card">
-        <div class="text-sm font-bold text-blue-300">${winRate}%</div>
-        <div class="stat-label">獲利口數佔比</div>
-      </div>
-      <div class="stat-card">
-        <div class="text-sm font-bold text-gray-300">${sym}${totalSpent.toFixed(0)}</div>
-        <div class="stat-label">總花費</div>
-      </div>
-      <div class="stat-card">
-        <div class="text-sm font-bold text-gray-300">${sym}${totalEarned.toFixed(0)}</div>
-        <div class="stat-label">總獲得市值</div>
-      </div>
-    </div>`;
-}
-
-function clearSim() {
-  ['simResults','simSummary'].forEach(id => {
-    document.getElementById(id).classList.add('hidden');
-    document.getElementById(id).innerHTML = '';
-  });
-}
-
-// --- CSV ---
-function exportCSV() {
-  const packPrice = document.getElementById('packPrice').value;
-  const totalPacks = document.getElementById('totalPacks').value;
-  const currency = document.getElementById('currency').value;
-  const remainderValue = document.getElementById('remainderValue').value;
-
-  let csv = 'ORIPA_CONFIG\n';
-  csv += `packPrice,${packPrice}\ntotalPacks,${totalPacks}\ncurrency,${currency}\nremaiderValue,${remainderValue}\n`;
-  csv += '\nPRIZE_DATA\n名稱,市值,數量\n';
-  prizes.forEach(p => { csv += `"${(p.name||'').replace(/"/g,'""')}",${p.value},${p.qty}\n`; });
-
-  const blob = new Blob(['﻿'+csv], { type: 'text/csv;charset=utf-8;' });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url; a.download = 'oripa-config.csv'; a.click();
-  URL.revokeObjectURL(url);
-}
-
-function importCSV(event) {
-  const file = event.target.files[0];
-  if (!file) return;
-  const reader = new FileReader();
-  reader.onload = function(e) {
-    const text = e.target.result.replace(/^﻿/, '');
-    const lines = text.split('\n').map(l => l.trim()).filter(l => l);
-    let mode = '', newPrizes = [], config = {};
-    lines.forEach(line => {
-      if (line === 'ORIPA_CONFIG') { mode = 'config'; return; }
-      if (line === 'PRIZE_DATA')   { mode = 'prize';  return; }
-      if (line === '名稱,市值,數量')  { return; }
-      if (mode === 'config') { const [k,v] = line.split(','); config[k] = v; }
-      else if (mode === 'prize') {
-        const parts = parseCsvLine(line);
-        if (parts.length >= 3) newPrizes.push({ id: ++prizeIdCounter, name: parts[0], value: parseFloat(parts[1])||0, qty: parseInt(parts[2])||0 });
-      }
-    });
-    if (config.packPrice) document.getElementById('packPrice').value = config.packPrice;
-    if (config.totalPacks) document.getElementById('totalPacks').value = config.totalPacks;
-    if (config.currency) document.getElementById('currency').value = config.currency;
-    if (config.remainderValue) document.getElementById('remainderValue').value = config.remainderValue;
-    if (newPrizes.length > 0) {
-      prizes = [];
-      document.getElementById('prizeList').innerHTML = '';
-      newPrizes.forEach(p => { prizes.push(p); renderPrizeRow(p); });
-    }
-    recalc();
-    event.target.value = '';
-  };
-  reader.readAsText(file, 'UTF-8');
-}
-
-function parseCsvLine(line) {
-  const result = [];
-  let cur = '', inQ = false;
-  for (let i=0; i<line.length; i++) {
-    if (line[i] === '"') {
-      if (inQ && line[i+1] === '"') { cur += '"'; i++; }
-      else inQ = !inQ;
-    } else if (line[i] === ',' && !inQ) { result.push(cur); cur = ''; }
-    else cur += line[i];
-  }
-  result.push(cur);
-  return result;
-}
-
-function getCurrencySymbol(c) {
-  return { HKD: 'HK$', JPY: '¥', USD: '$', TWD: 'NT$' }[c] || '$';
-}
-
-init();
+// 備用：網址參數 ?amt=..&merchant=..
+(()=>{const q=new URLSearchParams(location.search);if(q.get('amt')||q.get('text')){
+ if(autoAdd({amt:q.get('amt'),merchant:q.get('merchant'),text:q.get('text'),source:q.get('source')}))save();
+ history.replaceState(null,'',location.pathname)}})();
+document.addEventListener('visibilitychange',()=>{if(!document.hidden)pullPending()});
+render();
+pullPending();
 </script>
-</body>
-</html>
+
+
+</body></html>
