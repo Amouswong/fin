@@ -401,7 +401,7 @@ header{padding:16px;font-size:22px;font-weight:700}
 .row{display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid #334155}
 .row:last-child{border:0}
 .muted{color:#94a3b8;font-size:13px}
-.inc{color:#4ade80}.exp{color:#f87171}
+.inc{color:#4ade80}.exp{color:#f87171}.tra{color:#93c5fd}
 input,select,button{width:100%;padding:11px;margin:5px 0;border-radius:10px;border:1px solid #334155;background:#0f172a;color:#e2e8f0;font-size:16px}
 button{background:#3b82f6;border:0;font-weight:600}
 button.sm{width:auto;padding:4px 10px;font-size:13px;background:#475569;margin:0}
@@ -420,6 +420,7 @@ canvas{width:100%}
 </head>
 <body>
 <header id="title">我的財務</header>
+<div id="syncSt" class="muted" style="padding:0 16px 6px"></div>
 <div id="alerts"></div>
 
 <!-- 記帳 -->
@@ -430,7 +431,7 @@ canvas{width:100%}
  </div>
  <div class="card">
   <div class="grid2">
-   <select id="tType"><option value="exp">支出</option><option value="inc">收入</option></select>
+   <select id="tType"><option value="exp">支出</option><option value="inc">收入</option><option value="tra">轉賬</option></select>
    <input id="tDate" type="date">
   </div>
   <select id="tCat"></select>
@@ -482,11 +483,11 @@ canvas{width:100%}
   <button onclick="exportCSV('ast')">匯出資產</button>
  </div>
  <div class="card">
-  <b>同步 Google Sheets</b>
+  <b>Google Sheets 資料庫</b>
   <p class="muted">貼上 Google Apps Script Web App 網址（見說明）</p>
   <input id="gsUrl" placeholder="https://script.google.com/macros/s/.../exec">
   <button onclick="saveGs()">儲存網址</button>
-  <button onclick="syncGs()">立即同步</button>
+  <button onclick="syncGs()">立即同步（上傳再重新載入）</button>
  </div>
  <div class="card">
   <b>備份 / 還原</b>
@@ -515,7 +516,38 @@ let D=JSON.parse(LS.getItem(K)||'null')||{
  tx:[],budgets:{},assets:[],gsUrl:'',
  cats:{exp:['飲食','交通','購物','住屋','娛樂','醫療','保險','教育','其他'],inc:['薪金','花紅','投資收益','副業','其他']}
 };
-const save=()=>{LS.setItem(K,JSON.stringify(D));render()};
+if(!D.cats.tra)D.cats.tra=['八達通增值','銀行轉賬','信用卡還款','其他'];
+let dirty=LS.getItem(K+'_dirty')==='1',pushT;
+function setSt(t){const e=$('syncSt');if(e)e.textContent=t}
+function markDirty(v){dirty=v;LS.setItem(K+'_dirty',v?'1':'0')}
+const save=()=>{LS.setItem(K,JSON.stringify(D));render();if(D.gsUrl){markDirty(true);clearTimeout(pushT);pushT=setTimeout(pushRemote,800)}};
+async function pushRemote(){
+ if(!D.gsUrl||!dirty)return;
+ setSt('⏳ 儲存到 Google Sheet 中…');
+ try{await fetch(D.gsUrl,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain'},
+   body:JSON.stringify({action:'save',tx:D.tx,assets:D.assets,budgets:D.budgets,cats:D.cats})});
+  markDirty(false);setSt('✅ 已儲存到 Google Sheet '+new Date().toLocaleTimeString('zh-HK',{hour:'2-digit',minute:'2-digit'}));
+ }catch(e){setSt('⚠️ 離線：資料已暫存在手機，連線後會自動上傳')}
+}
+async function loadRemote(){
+ if(!D.gsUrl)return;
+ if(dirty)await pushRemote();
+ if(dirty)return;            // 仍然離線，保留手機資料
+ setSt('⏳ 從 Google Sheet 載入中…');
+ try{
+  const r=await (await fetch(D.gsUrl+'?action=load')).json();
+  const remoteEmpty=!r.tx.length&&!r.assets.length&&!Object.keys(r.budgets||{}).length;
+  const localHas=D.tx.length||D.assets.length;
+  if(!(remoteEmpty&&localHas)){   // 第一次連接時 Sheet 是空的，就保留手機資料並上傳
+   D.tx=r.tx.sort((a,b)=>b.date.localeCompare(a.date));D.assets=r.assets;D.budgets=r.budgets||{};
+   if(r.cats)D.cats=Object.assign(D.cats,r.cats);
+  }
+  let n=0;(r.pending||[]).forEach(p=>{if(autoAdd(p))n++});
+  if(n)$('alerts').insertAdjacentHTML('afterbegin',`<div class="alert" style="background:#1e3a8a;color:#bfdbfe">🔔 已自動加入 ${n} 筆通知記錄，請檢查分類</div>`);
+  if(n||(remoteEmpty&&localHas))save();else{LS.setItem(K,JSON.stringify(D));render()}
+  setSt('✅ 已與 Google Sheet 同步 '+new Date().toLocaleTimeString('zh-HK',{hour:'2-digit',minute:'2-digit'}));
+ }catch(e){setSt('⚠️ 未能連接 Google Sheet，顯示手機內的資料')}
+}
 const $=id=>document.getElementById(id);
 const fmt=n=>'$'+(+n).toLocaleString('zh-HK',{minimumFractionDigits:0,maximumFractionDigits:2});
 const ym=d=>d.slice(0,7);
@@ -562,7 +594,7 @@ function render(){
  const inc=mt.filter(t=>t.type==='inc').reduce((a,t)=>a+t.amt,0),exp=mt.filter(t=>t.type==='exp').reduce((a,t)=>a+t.amt,0);
  $('bal').textContent=fmt(inc-exp);$('mInc').textContent=fmt(inc);$('mExp').textContent=fmt(exp);
  $('txList').innerHTML=D.tx.slice(0,100).map(t=>`<div class="row"><div><div>${t.cat} <span class="muted">${t.note||''}</span></div><div class="muted">${t.date}</div></div>
-  <div><span class="${t.type}">${t.type==='inc'?'+':'-'}${fmt(t.amt)}</span> <button class="sm" onclick="delTx(${t.id})">✕</button></div></div>`).join('')||'<div class="muted">尚未有記錄</div>';
+  <div><span class="${t.type}">${t.type==='inc'?'+':t.type==='tra'?'⇄':'-'}${fmt(t.amt)}</span> <button class="sm" onclick="delTx(${t.id})">✕</button></div></div>`).join('')||'<div class="muted">尚未有記錄</div>';
  // budgets
  const sp=monthSpend(m);let al='';
  $('budList').innerHTML=Object.entries(D.budgets).map(([c,b])=>{const u=sp[c]||0,p=Math.min(u/b*100,100);
@@ -608,17 +640,13 @@ function drawCharts(){
 function dl(name,text,type){const a=document.createElement('a');a.href=URL.createObjectURL(new Blob(['\ufeff'+text],{type}));a.download=name;a.click()}
 const esc=v=>`"${String(v??'').replace(/"/g,'""')}"`;
 function exportCSV(k){
- if(k==='tx')dl('收支記錄.csv',['日期,類型,分類,金額,備註',...D.tx.map(t=>[t.date,t.type==='inc'?'收入':'支出',t.cat,t.amt,t.note].map(esc).join(','))].join('\n'),'text/csv');
+ if(k==='tx')dl('收支記錄.csv',['日期,類型,分類,金額,備註',...D.tx.map(t=>[t.date,t.type==='inc'?'收入':t.type==='tra'?'轉賬':'支出',t.cat,t.amt,t.note].map(esc).join(','))].join('\n'),'text/csv');
  else dl('資產.csv',['類型,名稱,數量,成本,現價,市值',...D.assets.map(a=>[a.type,a.name,a.qty,a.cost,a.price,a.qty*a.price].map(esc).join(','))].join('\n'),'text/csv');
 }
 function backup(){dl('myfin_backup_'+new Date().toISOString().slice(0,10)+'.json',JSON.stringify(D),'application/json')}
 function restore(inp){const f=inp.files[0];if(!f)return;f.text().then(t=>{if(confirm('還原會覆蓋現有資料，確定？')){D=JSON.parse(t);save();alert('已還原')}})}
-function saveGs(){D.gsUrl=$('gsUrl').value.trim();save();alert('已儲存')}
-async function syncGs(){
- if(!D.gsUrl)return alert('請先設定 Apps Script 網址');
- try{await fetch(D.gsUrl,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain'},body:JSON.stringify({tx:D.tx,assets:D.assets})});alert('已送出同步，請到 Google Sheets 查看')}
- catch(e){alert('同步失敗：'+e.message)}
-}
+function saveGs(){D.gsUrl=$('gsUrl').value.trim().replace(/\?.*$/,'');LS.setItem(K,JSON.stringify(D));loadRemote();alert('已儲存，正在連接 Google Sheet')}
+async function syncGs(){if(!D.gsUrl)return alert('請先設定 Apps Script 網址');markDirty(true);await pushRemote();await loadRemote()}
 
 try{if('serviceWorker' in navigator&&location.protocol==='https:')navigator.serviceWorker.register('sw.js').catch(()=>{})}catch(e){}
 
@@ -629,29 +657,28 @@ const AUTO_CAT=[[/麥當勞|mcdonald|starbucks|大家樂|美心|cafe|restaurant|
  [/netflix|spotify|disney|steam|cinema|戲院/i,'娛樂'],
  [/clinic|醫|pharmacy|藥|watsons|屈臣氏|mannings|萬寧/i,'醫療']];
 function guessCat(s){for(const[r,c]of AUTO_CAT)if(r.test(s||''))return D.cats.exp.includes(c)?c:'其他';return '其他'}
-function parseAmt(t){const m=String(t||'').replace(/,/g,'').match(/(?:HKD|HK\$|\$)\s*([0-9]+(?:\.[0-9]{1,2})?)|([0-9]+\.[0-9]{2})/i);return m?parseFloat(m[1]||m[2]):0}
+function parseAmt(t){const s=String(t||'').replace(/,/g,'');const m=s.match(/(?:HKD|HK\$|\$)\s*-?([0-9]+(?:\.[0-9]{1,2})?)|([0-9]+\.[0-9]{1,2})/i)||s.match(/(?:^|\n)\s*-?([0-9]+)\s*(?:\n|$)/);return m?parseFloat(m[1]||m[2]):0}
 function autoAdd(p){
- const amt=parseFloat(p.amt)||parseAmt(p.text);if(!amt)return false;
+ const amt=parseFloat(String(p.amt||'').replace(/[^0-9.]/g,''))||parseAmt(p.text);if(!amt)return false;
  const merchant=p.merchant||'';
- const isInc=/入賬|存入|credit|received|收到/i.test(p.text||'');
- D.tx.unshift({id:Date.now()+Math.random(),type:isInc?'inc':'exp',date:(p.time?new Date(p.time):new Date()).toISOString().slice(0,10),
-  cat:isInc?'其他':guessCat(merchant+' '+(p.text||'')),amt,note:'🔔 '+(merchant||p.source||'自動'),auto:true});
+ const all=merchant+' '+(p.text||'');
+ const date=(p.time?new Date(p.time):new Date()).toISOString().slice(0,10);
+ const isTop=/增值|top.?up|OCL\*|octopus|八達通/i.test(all), isTra=isTop||/轉賬|轉帳|transfer|FPS|轉數快|還款|repayment/i.test(all);
+ const isInc=!isTra&&/入賬|存入|credit|received|收到/i.test(p.text||'');
+ const type=isTra?'tra':isInc?'inc':'exp';
+ // 防重複：信用卡付款 + 八達通增值 同日同額只記一次
+ if(isTra&&D.tx.some(t=>t.auto&&t.type==='tra'&&t.date===date&&t.amt===amt))return false;
+ D.tx.unshift({id:Date.now()+Math.random(),type,date,
+  cat:isTop?'八達通增值':isTra?'銀行轉賬':isInc?'其他':guessCat(all),amt,note:'🔔 '+(merchant||p.source||'自動'),auto:true});
  return true;
-}
-async function pullPending(){
- if(!D.gsUrl)return;
- try{const r=await fetch(D.gsUrl+'?action=pull');const list=await r.json();
-  let n=0;list.forEach(p=>{if(autoAdd(p))n++});
-  if(n){save();$('alerts').insertAdjacentHTML('afterbegin',`<div class="alert" style="background:#1e3a8a;color:#bfdbfe">🔔 已自動加入 ${n} 筆通知記錄，請檢查分類</div>`)}
- }catch(e){console.log('pull failed',e)}
 }
 // 備用：網址參數 ?amt=..&merchant=..
 (()=>{const q=new URLSearchParams(location.search);if(q.get('amt')||q.get('text')){
  if(autoAdd({amt:q.get('amt'),merchant:q.get('merchant'),text:q.get('text'),source:q.get('source')}))save();
  history.replaceState(null,'',location.pathname)}})();
-document.addEventListener('visibilitychange',()=>{if(!document.hidden)pullPending()});
+document.addEventListener('visibilitychange',()=>{if(!document.hidden)loadRemote()});
 render();
-pullPending();
+loadRemote();
 </script>
 
 
